@@ -2,11 +2,19 @@
 """
 Installation script for Bangla LLM package with all dependencies.
 This script handles the special installation requirements for GPU support and Git packages.
+
+Usage:
+    python install.py              # Interactive mode
+    python install.py --gpu        # Install with GPU support
+    python install.py --no-gpu     # Install without GPU support
+    python install.py -y          # Auto-yes to all prompts (with GPU)
+    python install.py --yes       # Same as -y
 """
 
 import subprocess
 import sys
 import os
+import argparse
 from pathlib import Path
 
 
@@ -29,9 +37,15 @@ def run_command(cmd, description=""):
 
 def main():
     """Main installation function."""
+    parser = argparse.ArgumentParser(description='Install Bangla LLM package with dependencies')
+    parser.add_argument('--gpu', action='store_true', help='Install with GPU support')
+    parser.add_argument('--no-gpu', action='store_true', help='Install without GPU support')
+    parser.add_argument('-y', '--yes', action='store_true', help='Auto-yes to all prompts (installs GPU support)')
 
-    # Check if we're in a virtual environment
-    if not hasattr(sys, 'real_prefix') and not (
+    args = parser.parse_args()
+
+    # Check if we're in a virtual environment (skip in non-interactive mode)
+    if not args.yes and not hasattr(sys, 'real_prefix') and not (
             hasattr(sys, 'base_prefix') and sys.base_prefix != sys.prefix
     ):
         print("Warning: Not in a virtual environment. Consider using venv or conda.")
@@ -51,8 +65,16 @@ def main():
         sys.exit(1)
 
     # Step 2: Install GPU support for llama-cpp-python
-    gpu_support = input("Install GPU support for llama-cpp-python? (y/N): ")
-    if gpu_support.lower() == 'y':
+    install_gpu = False
+    if args.gpu or args.yes:
+        install_gpu = True
+    elif args.no_gpu:
+        install_gpu = False
+    else:
+        gpu_support = input("Install GPU support for llama-cpp-python? (y/N): ")
+        install_gpu = gpu_support.lower() == 'y'
+
+    if install_gpu:
         success = run_command(
             "pip install llama-cpp-python==0.2.85 --extra-index-url https://abetlen.github.io/llama-cpp-python/whl/cu122",
             "Installing llama-cpp-python with CUDA support"
@@ -118,3 +140,4 @@ def main():
 if __name__ == "__main__":
     success = main()
     sys.exit(0 if success else 1)
+    
