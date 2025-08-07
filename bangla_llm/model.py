@@ -62,4 +62,3 @@ class BanglaLLM:
         except Exception as e:
             logger.exception("Error during text processing in invoke method")
             raise RuntimeError(f"Text processing failed: {str(e)}")
-        

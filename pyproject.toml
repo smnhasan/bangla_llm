@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools", "wheel"]
+requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -7,7 +7,114 @@ name = "bangla_llm"
 version = "0.1.0"
 description = "Bangla LLM Evaluation Framework"
 authors = [{ name="S M Nahid Hasan", email="smhasan.ruet.ece17@gmail.com" }]
-dependencies = [
-    "pandas>=2.0.0",
-    "numpy>=1.24.0"
+readme = "README.md"
+requires-python = ">=3.9"
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Text Processing :: Linguistic",
 ]
+keywords = ["bangla", "nlp", "llm", "evaluation", "machine-learning"]
+
+dependencies = [
+    # Core dependencies
+    "pandas>=2.0.0",
+    "numpy>=1.24.0",
+
+    # LangChain ecosystem
+    "langchain",
+    "langchain_community",
+
+    # ML/AI frameworks
+    "InstructorEmbedding==1.0.1",
+    "sentence-transformers==2.2.2",
+    "transformers>=4.20",
+    "torch>=2.0",
+
+    # Data handling
+    "datasets>=2.20",
+    "pyarrow>=17.0",
+
+    # Hugging Face
+    "huggingface-hub==0.24.0",
+
+    # Text processing
+    "nltk>=3.8",
+
+    # Additional utilities
+    "tqdm>=4.64.0",
+    "requests>=2.28.0",
+]
+
+[project.optional-dependencies]
+# GPU support for llama-cpp-python
+gpu = [
+    "llama-cpp-python[cublas]>=0.2.85",
+]
+
+# Development dependencies
+dev = [
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
+    "black>=23.0.0",
+    "flake8>=5.0.0",
+    "mypy>=1.0.0",
+    "pre-commit>=3.0.0",
+]
+
+# Documentation
+docs = [
+    "sphinx>=5.0.0",
+    "sphinx-rtd-theme>=1.2.0",
+    "myst-parser>=0.18.0",
+]
+
+# All optional dependencies
+all = [
+    "bangla_llm[gpu,dev,docs]",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/smnhasan/bangla_llm"
+"Bug Reports" = "https://github.com/smnhasan/bangla_llm/issues"
+"Source" = "https://github.com/smnhasan/bangla_llm"
+"Documentation" = "https://bangla-llm.readthedocs.io/"
+
+[tool.setuptools]
+packages = ["bangla_llm"]
+
+[tool.setuptools.package-dir]
+bangla_llm = "src/bangla_llm"
+
+[tool.black]
+line-length = 88
+target-version = ['py39']
+include = '\.pyi?$'
+exclude = '''
+/(
+    \.eggs
+  | \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | _build
+  | buck-out
+  | build
+  | dist
+)/
+'''
+
+[tool.mypy]
+python_version = "3.9"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
