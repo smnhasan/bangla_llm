@@ -114,6 +114,6 @@ def convert(text: str, target: str):
     if target == "bn" and is_bengali_text(text)== False:
         return translate_en_to_bn_batch([text])
     elif target == "en" and is_bengali_text(text)== True:
-        return translate_bn_to_en_batch(text)
+        return translate_bn_to_en_batch([text])
     else:
         return text
