@@ -10,6 +10,6 @@ class BanglaLLM:
 
     def invoke(self, text):
         converted = convert(text, target='en')
-        res = self.llm.generate(converted)
+        res = self.llm.generate(converted[0])
         response = convert(res, target='bn')
-        return response
+        return response[0]

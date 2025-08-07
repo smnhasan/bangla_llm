@@ -102,7 +102,7 @@ class LlamaModel:
             RuntimeError: If generation fails.
         """
         if not isinstance(text, str) or not text.strip():
-            logger.error("Invalid text: must be a non-empty string")
+            logger.error(f"Invalid text: must be a non-empty string. Got : {text}")
             raise ValueError("Text must be a non-empty string")
 
         try:
