@@ -65,15 +65,15 @@ class BanglaLLM:
 
         try:
             # Convert input text to English
-            logger.info("Converting input text to English")
+            print("Converting input text to English")
             converted = convert(text, target='en')
-            logger.info(f"Converted text to English: {converted}")
+            print(f"Converted text to English: {converted}")
 
             # Create formatted prompt
             prompt = get_chat_prompt(converted)
 
             # Generate response using Llama model
-            logger.info("Generating response with Llama model using formatted prompt")
+            print("Generating response with Llama model using formatted prompt")
             res = self.llm.generate(
                 prompt,
                 max_tokens=kwargs.get('max_tokens'),
@@ -83,12 +83,12 @@ class BanglaLLM:
                 repeat_penalty=kwargs.get('repeat_penalty'),
                 stop=kwargs.get('stop')
             )
-            logger.info(f"Generated response: {res}")
+            print(f"Generated response: {res}")
 
             # Convert generated response to Bengali
-            logger.info("Converting generated response to Bengali")
+            print("Converting generated response to Bengali")
             response = convert(res, target='bn')
-            logger.info(f"Final response in Bengali: {response}")
+            print(f"Final response in Bengali: {response}")
 
             return response
 
