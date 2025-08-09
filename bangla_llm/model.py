@@ -69,20 +69,10 @@ class BanglaLLM:
             converted = convert(text, target='en')
             print(f"Converted text to English: {converted}")
 
-            # Create formatted prompt
-            prompt = get_chat_prompt(converted)
-
             # Generate response using Llama model
             print("Generating response with Llama model using formatted prompt")
-            res = self.llm.generate(
-                prompt,
-                max_tokens=kwargs.get('max_tokens'),
-                temperature=kwargs.get('temperature'),
-                top_p=kwargs.get('top_p'),
-                top_k=kwargs.get('top_k'),
-                repeat_penalty=kwargs.get('repeat_penalty'),
-                stop=kwargs.get('stop')
-            )
+            messages = get_chat_messages(converted)
+            res = self.llm.generate_with_chat_template(messages, max_tokens=500)
             print(f"Generated response: {res}")
 
             # Convert generated response to Bengali
