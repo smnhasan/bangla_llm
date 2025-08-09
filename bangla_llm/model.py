@@ -57,7 +57,6 @@ class BanglaLLM:
             ValueError: If the input text is invalid.
             RuntimeError: If conversion or generation fails.
         """
-        logger.info(f'Processing input text: {text}', flush=True)
         logger.info(f'Processing input text: {text}')
         if not isinstance(text, str) or not text.strip():
             logger.error("Invalid input: text must be a non-empty string")
