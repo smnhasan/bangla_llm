@@ -75,7 +75,7 @@ class BanglaLLM:
 
             # Generate response using Llama model
             logger.info("Generating response with Llama model using formatted prompt")
-            response = self.llm.generate_with_chat_template(
+            response = self.llm.generate(
                 prompt,
                 max_tokens=kwargs.get('max_tokens'),
                 temperature=kwargs.get('temperature'),
@@ -84,6 +84,7 @@ class BanglaLLM:
                 repeat_penalty=kwargs.get('repeat_penalty'),
                 stop=kwargs.get('stop')
             )
+            print(f'Generated response: {response}')
             logger.info(f"Generated response: {response}")
 
             # Convert generated response to Bengali
