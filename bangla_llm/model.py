@@ -57,7 +57,7 @@ class BanglaLLM:
             ValueError: If the input text is invalid.
             RuntimeError: If conversion or generation fails.
         """
-        print(f'Processing input text: {text}', flush=True)
+        logger.info(f'Processing input text: {text}', flush=True)
         logger.info(f'Processing input text: {text}')
         if not isinstance(text, str) or not text.strip():
             logger.error("Invalid input: text must be a non-empty string")
@@ -65,20 +65,30 @@ class BanglaLLM:
 
         try:
             # Convert input text to English
-            print("Converting input text to English")
+            logger.info("Converting input text to English")
             converted = convert(text, target='en')
-            print(f"Converted text to English: {converted}")
+            logger.info(f"Converted text to English: {converted}")
+
+            # Create formatted prompt
+            prompt = get_chat_prompt(converted)
 
             # Generate response using Llama model
-            print("Generating response with Llama model using formatted prompt")
-            messages = get_chat_messages(converted)
-            res = self.llm.generate_with_chat_template(messages, max_tokens=500)
-            print(f"Generated response: {res}")
+            logger.info("Generating response with Llama model using formatted prompt")
+            res = self.llm.generate_with_chat_template(
+                prompt,
+                max_tokens=kwargs.get('max_tokens'),
+                temperature=kwargs.get('temperature'),
+                top_p=kwargs.get('top_p'),
+                top_k=kwargs.get('top_k'),
+                repeat_penalty=kwargs.get('repeat_penalty'),
+                stop=kwargs.get('stop')
+            )
+            logger.info(f"Generated response: {res}")
 
             # Convert generated response to Bengali
-            print("Converting generated response to Bengali")
+            logger.info("Converting generated response to Bengali")
             response = convert(res, target='bn')
-            print(f"Final response in Bengali: {response}")
+            logger.info(f"Final response in Bengali: {response}")
 
             return response
 
