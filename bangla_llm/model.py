@@ -1,5 +1,5 @@
 from .llm import ModelConfig, LlamaModel, get_chat_prompt, get_chat_messages
-from .nlu import convert
+from .nlu import convert, is_bengali_text
 import logging
 from typing import List, Dict, Optional, Generator, Any
 
@@ -66,15 +66,17 @@ class BanglaLLM:
         try:
             # Convert input text to English
             logger.info("Converting input text to English")
-            converted = convert(text, target='en')
-            logger.info(f"Converted text to English: {converted}")
+            is_bengali = is_bengali_text(text)
+            if is_bengali:
+                text = convert(text, target='en')
+            logger.info(f"Converted text to English: {text}")
 
             # Create formatted prompt
-            prompt = get_chat_prompt(converted)
+            prompt = get_chat_prompt(text)
 
             # Generate response using Llama model
             logger.info("Generating response with Llama model using formatted prompt")
-            res = self.llm.generate_with_chat_template(
+            response = self.llm.generate_with_chat_template(
                 prompt,
                 max_tokens=kwargs.get('max_tokens'),
                 temperature=kwargs.get('temperature'),
@@ -83,11 +85,12 @@ class BanglaLLM:
                 repeat_penalty=kwargs.get('repeat_penalty'),
                 stop=kwargs.get('stop')
             )
-            logger.info(f"Generated response: {res}")
+            logger.info(f"Generated response: {response}")
 
             # Convert generated response to Bengali
             logger.info("Converting generated response to Bengali")
-            response = convert(res, target='bn')
+            if is_bengali:
+                response = convert(response, target='bn')
             logger.info(f"Final response in Bengali: {response}")
 
             return response
@@ -114,20 +117,23 @@ class BanglaLLM:
         try:
             # Convert input text to English
             logger.info("Converting input text to English for chat completion")
-            converted = convert(text, target='en')
-            logger.info(f"Converted text to English: {converted}")
+            is_bengali = is_bengali_text(text)
+            if is_bengali:
+                text = convert(text, target='en')
+            logger.info(f"Converted text to English: {text}")
 
             # Create chat messages
-            messages = get_chat_messages(converted)
+            messages = get_chat_messages(text)
 
             # Generate response using chat completion
             logger.info("Generating response with chat completion")
-            res = self.llm.generate_with_chat_template(messages, **kwargs)
-            logger.info(f"Generated response: {res}")
+            response = self.llm.generate_with_chat_template(messages, **kwargs)
+            logger.info(f"Generated response: {response}")
 
             # Convert generated response to Bengali
             logger.info("Converting generated response to Bengali")
-            response = convert(res, target='bn')
+            if is_bengali:
+                response = convert(response, target='bn')
             logger.info(f"Final response in Bengali: {response}")
 
             return response
@@ -157,15 +163,17 @@ class BanglaLLM:
         try:
             # Convert input text to English
             logger.info("Converting input text to English for streaming")
-            converted = convert(text, target='en')
-            logger.info(f"Converted text to English: {converted}")
+            is_bengali = is_bengali_text(text)
+            if is_bengali:
+                text = convert(text, target='en')
+            logger.info(f"Converted text to English: {text}")
 
             # Create formatted prompt
-            prompt = get_chat_prompt(converted)
+            prompt = get_chat_prompt(text)
 
             # Generate response with streaming
             logger.info("Starting streaming generation")
-            english_response = ""
+            response = ""
 
             # Collect all tokens from streaming
             for token in self.llm.generate(
@@ -178,11 +186,15 @@ class BanglaLLM:
                     repeat_penalty=kwargs.get('repeat_penalty'),
                     stop=kwargs.get('stop')
             ):
-                english_response += token
+                response += token
+                yield response
+                return response
 
             # Convert complete response to Bengali
             logger.info("Converting streaming response to Bengali")
-            bengali_response = convert(english_response, target='bn')
+            bengali_response = ""
+            if is_bengali:
+                bengali_response = convert(response, target='bn')
             logger.info(f"Final streaming response in Bengali: {bengali_response}")
 
             # Yield the complete Bengali response (since we can't translate token by token)
